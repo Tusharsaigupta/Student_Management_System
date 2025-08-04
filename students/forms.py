@@ -1,5 +1,7 @@
 from django import forms
 from .models import Student
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 
 class StudentForm(forms.ModelForm):
@@ -22,3 +24,19 @@ class StudentForm(forms.ModelForm):
       'field_of_study': forms.TextInput(attrs={'class': 'form-control'}),
       'gpa': forms.NumberInput(attrs={'class': 'form-control'}),
     }
+
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2"]
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({
+                'class': 'form-control',
+                'placeholder': field.label
+            })

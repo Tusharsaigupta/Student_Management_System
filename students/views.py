@@ -1,9 +1,12 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.urls import reverse
-
+from django.contrib.auth import login 
+from django.shortcuts import render ,redirect 
+from .forms import RegisterForm
 from .models import Student
 from .forms import StudentForm
+
+
 
 
 # Create your views here.
@@ -71,3 +74,18 @@ def delete(request, id):
     student = Student.objects.get(pk=id)
     student.delete()
   return HttpResponseRedirect(reverse('index'))
+
+
+
+def register_view(request):
+  if request.method == 'POST':
+    form = RegisterForm(request.POST)
+    if form.is_valid():
+      user = form.save()
+      login(request, user)
+      return redirect('/') 
+    
+  else :
+    form = RegisterForm()
+
+  return render(request, 'students/register.html', {'form':form})
